@@ -1,0 +1,72 @@
+## RSA密钥计算
+
+### 题目
+
+在一次RSA密钥计算中，假设：
+
+- P = A890768DCF26582145A87B24BE722E9B
+- Q = 8DD7C2DCB43AC1945F668E72F058EBBB
+- E = 10001
+
+求解出 D。
+
+### 思路和步骤
+
+1. **转换十六进制为十进制**：
+   将题目中给出的十六进制数 P、Q 和 E 转换为十进制表示，以便后续计算。
+2. **计算 N**：
+   根据 RSA 算法，计算 N 为 P 和 Q 的乘积。
+   N = P * Q
+3. **计算 φ(N)**：
+   计算 φ(N) 为 (P - 1) 和 (Q - 1) 的乘积。
+   φ(N) = (P - 1) * (Q - 1)
+4. **求解 D (私钥)**：
+   通过扩展欧几里得算法求解 D，使得 D * E ≡ 1 (mod φ(N))。
+5. **输出结果**：
+   将计算得到的 D 以十六进制形式输出。
+
+### 代码实现
+
+以下是实现上述步骤的Python代码：
+
+```python
+# 题目：在一次RSA密钥计算中，假设 P = A890768DCF26582145A87B24BE722E9B，Q = 8DD7C2DCB43AC1945F668E72F058EBBB，E = 10001，求解出D。
+
+# 定义扩展欧几里得算法，用于计算模逆
+def extended_gcd(a, b):
+    if a == 0:
+        return b, 0, 1
+    gcd, x1, y1 = extended_gcd(b % a, a)
+    x = y1 - (b // a) * x1
+    y = x1
+    return gcd, x, y
+
+# 计算模逆
+def mod_inverse(a, m):
+    gcd, x, y = extended_gcd(a, m)
+    if gcd != 1:
+        raise ValueError("Inverse doesn't exist")
+    else:
+        return x % m
+
+# 十六进制转十进制
+P = int('A890768DCF26582145A87B24BE722E9B', 16)
+Q = int('8DD7C2DCB43AC1945F668E72F058EBBB', 16)
+E = int('10001', 16)
+
+# 计算 N = P * Q
+N = P * Q
+
+# 计算 φ(N) = (P - 1) * (Q - 1)
+phi_N = (P - 1) * (Q - 1)
+
+# 计算 D，使得 D * E ≡ 1 (mod φ(N))
+D = mod_inverse(E, phi_N)
+
+# 输出 D 的值，使用十六进制表示
+print("D:", hex(D))
+
+# Output:
+# D: 0x3fb9954df90fe05207f2c044f0f5c34a45dce3066018def4eade48f2c48add31
+
+```
